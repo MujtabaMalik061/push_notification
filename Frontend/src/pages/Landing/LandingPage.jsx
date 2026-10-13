@@ -1,208 +1,266 @@
-import React from "react";
+import { createElement } from "react";
+import { Link } from "react-router-dom";
 import {
-  Sparkles,
-  Shield,
   ArrowRight,
-  Key,
-  Code2,
-  Zap,
-  CreditCard,
-  Gift,
   Bell,
+  Code2,
+  KeyRound,
+  Gift,
+  BarChart3,
+  Wallet,
+  Check,
+  Terminal,
+  Layers,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import "../../assets/style/LandingPage.css";
-import { CustomCodeSection } from "../../components/CustomComponents";
-
-export const LandingPage = () => {
-  const navigate = useNavigate();
-
+const features = [
+  [
+    Code2,
+    "A familiar developer workflow",
+    "Connect your Firebase project, install the JavaScript SDK, and send notifications from your application.",
+  ],
+  [
+    KeyRound,
+    "Your keys, in one place",
+    "Create and manage API keys from the dashboard. Revoke access when a key is no longer needed.",
+  ],
+  [
+    BarChart3,
+    "See what happens next",
+    "Review API activity and notification results to understand usage and investigate failed requests.",
+  ],
+  [
+    Wallet,
+    "Credits you can track",
+    "Check your balance and usage in the dashboard, then purchase credits when you need more.",
+  ],
+  [
+    Gift,
+    "Daily rewards",
+    "Claim available daily rewards from your account to keep experimenting with your integration.",
+  ],
+  [
+    Layers,
+    "Built for everyday updates",
+    "Bring order updates, reminders, and product announcements into the same notification workflow.",
+  ],
+];
+export default function LandingPage() {
   return (
-    <div className="landing-page-container">
-      <section className="landing-page-hero">
-        <div className="landing-page-hero-inner">
-          <div className="landing-page-hero-badge">
-            <Sparkles
-              size={18}
-              color="var(--primary)"
-              className="landing-page-icon-small"
-            />
-            Now with daily free credits
-          </div>
-
-          <h1 className="landing-page-hero-title">
-            Send Notifications{" "}
-            <span className="landing-page-text-primary">Instantly</span> with
-            Dev Push Notification
+    <>
+      <section className="marketing-hero marketing-width">
+        <div className="hero-copy">
+          <span className="marketing-eyebrow">
+            <span className="status-dot" /> A direct connection to your users
+          </span>
+          <h1>
+            Small message.
+            <br />
+            <span>Big connection.</span>
           </h1>
-          <p className="landing-page-hero-subtitle">
-            The simplest API for push notifications. Built for developers, loved
-            by startups. One API call. One credit. Done.
+          <p>
+            Keep your users in the loop with a simple push notification API.
+            From the first integration to everyday updates, Dev Push helps you
+            make every message count.
           </p>
-          <div className="landing-page-hero-cta">
-            <button
-              onClick={() => navigate("/api-section")}
+          <div className="marketing-actions">
+            <Link
               className="landing-page-btn landing-page-btn-primary"
+              to="/signup"
             >
-              <Key size={18} className="landing-page-icon-small icon" />
-              Get API Key
-            </button>
-            <button
-              onClick={() => navigate("/landing-docs")}
+              Start building <ArrowRight size={18} />
+            </Link>
+            <Link
               className="landing-page-btn landing-page-btn-outline"
+              to="/landing-docs"
             >
-              <Code2 size={18} className="landing-page-icon-small icon" />
-              View Docs
-            </button>
+              Explore the docs <Code2 size={18} />
+            </Link>
+          </div>
+          <div className="hero-checks">
+            <span>
+              <Check size={16} /> JavaScript SDK
+            </span>
+            <span>
+              <Check size={16} /> Credit-based usage
+            </span>
+          </div>
+        </div>
+        <div
+          className="hero-visual"
+          aria-label="Illustrative notification integration"
+        >
+          <div className="visual-label">
+            <Terminal size={16} /> YOUR NEXT GREAT UPDATE
+          </div>
+          <div className="notification-preview">
+            <span className="preview-bell">
+              <Bell size={22} />
+            </span>
+            <div>
+              <div className="preview-meta">
+                YOUR APP <span>now · example</span>
+              </div>
+              <h2>Your order is on its way 📦</h2>
+              <p>A timely update. Right where it matters.</p>
+            </div>
+          </div>
+          <div className="hero-code">
+            <div className="code-window-bar">
+              <span />
+              <span />
+              <span />
+              <b>notification.js</b>
+            </div>
+            <pre>
+              <code>{`await sendNotification({
+  apiKey: "YOUR_API_KEY",
+  title: "Your order is on its way",
+  body: "Thanks for shopping with us!",
+  fcmTokens: [deviceToken],
+});`}</code>
+            </pre>
+            <div className="code-footnote">
+              <span className="status-dot" /> One SDK. Your notification
+              workflow.
+            </div>
+          </div>
+          <div className="visual-caption">
+            <Bell size={16} /> The right message, at the right moment.
           </div>
         </div>
       </section>
-
-      <section className="landing-page-stats">
-        <div className="landing-page-section-header">
-          <h2 className="landing-page-section-title">
-            Why Developers Choose Us
+      <div className="marketing-strip">
+        <div className="marketing-width">
+          <span>Made for your next</span>
+          <strong>Product update</strong>
+          <strong>Order notification</strong>
+          <strong>Helpful reminder</strong>
+          <strong>New connection</strong>
+        </div>
+      </div>
+      <section className="marketing-section marketing-width">
+        <div className="section-heading">
+          <span className="marketing-eyebrow">
+            LESS FRICTION. MORE BUILDING.
+          </span>
+          <h2>
+            Everything you need.
+            <br />
+            Room to make it yours.
           </h2>
-          <p className="landing-page-section-subtitle">
-            Everything you need to add push notifications to your app.
+          <p>
+            A focused toolkit for adding notifications to your app and managing
+            them as you grow.
           </p>
         </div>
-        <div className="landing-page-features-grid">
-          <div className="landing-page-feature-card">
-            <div className="landing-page-feature-icon-wrapper">
-              <Zap className="landing-page-icon-feature icon" />
-            </div>
-            <h3 className="landing-page-feature-title">Lightning Fast</h3>
-            <p className="landing-page-feature-desc">
-              Send notifications in under 100ms with our global edge network.
-            </p>
+        <div className="marketing-grid">
+          {features.map(([Icon, title, text]) => (
+            <article className="marketing-card" key={title}>
+              <span className="marketing-icon">
+                {createElement(Icon, {
+                  size: 23,
+                })}
+              </span>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="workflow-section">
+        <div className="marketing-width">
+          <div className="section-heading">
+            <span className="marketing-eyebrow">
+              FROM IDEA TO FIRST MESSAGE
+            </span>
+            <h2>Three steps. One connection.</h2>
+            <p>Your next notification starts here.</p>
           </div>
-          <div className="landing-page-feature-card">
-            <div className="landing-page-feature-icon-wrapper">
-              <Shield className="landing-page-icon-feature icon" />
-            </div>
-            <h3 className="landing-page-feature-title">Secure by Default</h3>
-            <p className="landing-page-feature-desc">
-              API keys are encrypted and rate-limited. Your data stays safe.
-            </p>
+          <div className="workflow-grid">
+            {[
+              [
+                "01",
+                "Set up your account",
+                "Create an account, connect your Firebase configuration, and generate an API key.",
+              ],
+              [
+                "02",
+                "Connect your application",
+                "Follow the SDK guide to configure messaging and request notification permission.",
+              ],
+              [
+                "03",
+                "Send and keep track",
+                "Send to opted-in device tokens, then check your results, activity, and credit balance.",
+              ],
+            ].map(([n, title, text]) => (
+              <article key={n}>
+                <span className="step-number">{n}</span>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </article>
+            ))}
           </div>
-          <div className="landing-page-feature-card">
-            <div className="landing-page-feature-icon-wrapper">
-              <Code2 className="landing-page-icon-feature icon" />
-            </div>
-            <h3 className="landing-page-feature-title">Developer First</h3>
-            <p className="landing-page-feature-desc">
-              Simple REST API with SDKs for JavaScript, Python, and more.
-            </p>
+          <Link className="marketing-text-link" to="/landing-docs">
+            Follow the integration guide <ArrowRight size={17} />
+          </Link>
+        </div>
+      </section>
+      <section className="marketing-section marketing-width">
+        <div className="faq-layout">
+          <div className="section-heading">
+            <span className="marketing-eyebrow">GOOD QUESTIONS</span>
+            <h2>
+              A little clarity
+              <br />
+              before you start.
+            </h2>
+            <Link to="/contact" className="marketing-text-link">
+              Talk to us <ArrowRight size={17} />
+            </Link>
           </div>
-          <div className="landing-page-feature-card">
-            <div className="landing-page-feature-icon-wrapper">
-              <CreditCard className="landing-page-icon-feature icon" />
-            </div>
-            <h3 className="landing-page-feature-title">Pay Per Use</h3>
-            <p className="landing-page-feature-desc">
-              Credit-based pricing. Only pay for what you send.
-            </p>
-          </div>
-
-          <div className="landing-page-feature-card">
-            <div className="landing-page-feature-icon-wrapper">
-              <Key className="landing-page-icon-feature icon" />
-            </div>
-            <h3 className="landing-page-feature-title">API Key System</h3>
-            <p className="landing-page-feature-desc">
-              Generate multiple keys with granular permissions.
-            </p>
-          </div>
-
-          <div className="landing-page-feature-card">
-            <div className="landing-page-feature-icon-wrapper">
-              <Gift className="landing-page-icon-feature icon" />
-            </div>
-            <h3 className="landing-page-feature-title">Free Daily Credits</h3>
-            <p className="landing-page-feature-desc">
-              Earn free credits every day with our reward system.
-            </p>
+          <div className="marketing-faq">
+            {[
+              [
+                "What do I need to get started?",
+                "A Dev Push account, a Firebase project, and an application that supports push notifications. The documentation walks through configuration, the service worker, and device tokens.",
+              ],
+              [
+                "How do credits work?",
+                "Basic accounts use credits for supported API actions, including device token generation and notification sending. Check your dashboard for your balance, rewards, and available purchase options.",
+              ],
+              [
+                "Will every notification reach a device?",
+                "Delivery depends on notification permission, valid device tokens, network connectivity, and the messaging provider. Check the API response for success and failure results.",
+              ],
+              [
+                "Can I try it before integrating?",
+                "Yes. Explore the demo to see the notification workflow, then use the documentation to connect your own application.",
+              ],
+            ].map(([q, a]) => (
+              <details key={q}>
+                <summary>{q}</summary>
+                <p>{a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>
-
-      <section className="landing-page-testimonials">
-        <div className="landing-use-code-demo-left">
-          <h2 className="landing-page-section-title">Three Lines of Code</h2>
-          <p className="landing-page-section-subtitle">
-            Install our SDK, set your API key, and start sending. It's that
-            simple.
-          </p>
-
-          <div className="landing-code-points">
-            <div className="landing-code-point">
-              <div className="landing-code-point-icon">
-                <Bell />
-              </div>
-              <div>
-                <h4>1 notification = 1 credit</h4>
-                <p>Simple, transparent pricing</p>
-              </div>
-            </div>
-
-            <div className="landing-code-point">
-              <div className="landing-code-point-icon">
-                <Key />
-              </div>
-              <div>
-                <h4>Secure API keys</h4>
-                <p>Rotate, revoke, and manage access</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="landing-use-code-demo-right">
-          <CustomCodeSection
-            Title="notification.js"
-            codeBody={`import { sendNotification } from "dev-push-notification";
-
-const API_KEY = "YOUR_API_KEY_HERE";
-
-// Send a push notification
-await sendNotification({
-  apiKey: API_KEY,
-  title: 'Hello World!',
-  body: 'Your first push notification',
-  icon: "https://dev-push-notification.vercel.app/SiteIcon.png",
-  link: "https://yourapp.com",
-  fcmTokens: [token],
-});`}
-          />
-        </div>
+      <section className="marketing-cta marketing-width">
+        <span className="marketing-eyebrow">MAKE YOUR NEXT MESSAGE MATTER</span>
+        <h2>
+          Your users have something
+          <br />
+          to look forward to.
+        </h2>
+        <p>Build a better connection, one notification at a time.</p>
+        <Link
+          to="/signup"
+          className="landing-page-btn landing-page-btn-primary"
+        >
+          Get started <ArrowRight size={18} />
+        </Link>
       </section>
-
-      <section className="landing-credit-system"></section>
-
-      <section style={{ padding: "9rem 1rem" }} className="landing-page-hero">
-        <div className="landing-page-cta-inner">
-          <h2
-            style={{ fontSize: "28px" }}
-            className="landing-page-section-title"
-          >
-            Ready to Take Control of Your Notifications?
-          </h2>
-          <p className="landing-page-section-subtitle">
-            Join thousands of developers sending notifications with our API.
-          </p>
-          <button
-            style={{ marginTop: "15px" }}
-            onClick={() => navigate("/signUp")}
-            className="landing-page-btn landing-page-btn-secondary"
-          >
-            Get Started Free
-            <ArrowRight className="landing-page-icon-small icon" />
-          </button>
-        </div>
-      </section>
-    </div>
+    </>
   );
-};
-
-export default LandingPage;
+}

@@ -1,358 +1,240 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  ArrowDownToLine,
-  Book,
-  Code2,
-  Key,
-  Send,
-  Smartphone,
-} from "lucide-react";
-import { CustomCodeSection } from "../../components/CustomComponents";
-
-const LandingDocs = () => {
-  const [active, setActive] = useState("#introduction");
-  const scrollRef=useRef();
-
-  const sideBarKeys = [
-    { icon: Book, label: "Introduction", key: "#introduction" },
-    { icon: Code2, label: "Installation", key: "#installation" },
-    { icon: Key, label: "Authentication", key: "#authentication" },
-    { icon: Code2, label: "Service Worker", key: "#serviceWorker" },
-    { icon: Code2, label: "Import SDK", key: "#importSDK" },
-    { icon: Code2, label: "Initialize", key: "#initMessaging" },
-    { icon: Smartphone, label: "Get Device Token", key: "#getDeviceToken" },
-    { icon: Send, label: "Send Notification", key: "#sendNotification" },
-    { icon: ArrowDownToLine, label: "Response", key: "#response" },
-  ];
-
-useEffect(() => {
-  const container = scrollRef.current;
-  if (!container) return;
-
-  const sections = sideBarKeys.map((item) => container.querySelector(item.key));
-
-  const handleScroll = () => {
-    let current = "#introduction";
-
-    sections.forEach((section) => {
-      if (!section) return;
-
-      const rect = section.getBoundingClientRect();
-      const containerRect = container.getBoundingClientRect();
-
-      if (rect.top - containerRect.top <= 120) {
-        current = `#${section.id}`;
-      }
-    });
-
-    setActive(current);
-  };
-
-  container.addEventListener("scroll", handleScroll);
-
-  handleScroll();
-
-  return () => container.removeEventListener("scroll", handleScroll);
-}, []);
-
-  return (
-    <div className="landing-docs-container">
-      <div className="landing-docs-sidebar">
-        <h3 className="landing-docs-sidebar-title">Documentation</h3>
-
-        <div className="landing-docs-sidebar-links">
-          {sideBarKeys.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <a
-                key={index}
-                href={item.key}
-                onClick={() => setActive(item.key)}
-                className={`landing-docs-sidebar-link ${
-                  active === item.key ? "active" : ""
-                }`}
-              >
-                <Icon className="landing-docs-sidebar-icon" />
-                {item.label}
-              </a>
-            );
-          })}
-        </div>
-      </div>
-
-      <div ref={scrollRef} className="landing-docs-content">
-        <section id="introduction" className="landing-docs-section">
-          <h2>Introduction</h2>
-          <p>
-            Dev Push Notification (DPN) is a simple REST API for sending push
-            notifications.
-            <div className="docs-cta">
-              <a
-                href="https://www.npmjs.com/package/dev-push-notification"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="docs-btn"
-              >
-                📦 View Package on NPM
-              </a>
-            </div>
-          </p>
-        </section>
-
-        <section id="installation" className="landing-docs-section">
-          <h2>Installation</h2>
-
-          <CustomCodeSection
-            Title="install"
-            codeBody={`npm install dev-push-notification`}
-          />
-        </section>
-
-        <section id="authentication" className="landing-docs-section">
-          <h2>Authentication</h2>
-          <p>
-            Use your API key to authenticate all requests. Keep your API key
-            secure and never expose it publicly.
-          </p>
-
-          <CustomCodeSection
-            Title="auth.js"
-            codeBody={`const API_KEY = "YOUR_API_KEY_HERE";`}
-          />
-        </section>
-
-        <section id="serviceWorker" className="landing-docs-section">
-          <h2>Service Worker Setup</h2>
-
-          <p>
-            After installing the package, you must create a <b>dpn-sw.js</b>{" "}
-            file inside your <b>public</b> folder. This file is required to
-            handle background notifications.
-          </p>
-
-          <CustomCodeSection
-            Title="public/dpn-sw.js"
-            codeBody={`importScripts(
-  "https://www.gstatic.com/firebasejs/10.3.0/firebase-app-compat.js",
-);
-importScripts(
-  "https://www.gstatic.com/firebasejs/10.3.0/firebase-messaging-compat.js",
-);
-
-const API_LINK = "https://buddy-space.vercel.app";
-
-const decodeConfig = (encoded) => atob(encoded);
-
-const encodeConfig = {
-  apiKey: "QUl6YVN5QWJkTXZLcWx0dV9tTjRtUHJQVUstTVlJTEZsSjhudW04",
-  authDomain: "cHVzaG5vdGlmaWNhdGlvbi1hOTkwNS5maXJlYmFzZWFwcC5jb20=",
-  projectId: "cHVzaG5vdGlmaWNhdGlvbi1hOTkwNQ==",
-  storageBucket: "cHVzaG5vdGlmaWNhdGlvbi1hOTkwNS5maXJlYmFzZXN0b3JhZ2UuYXBw",
-  messagingSenderId: "NzkyMjkyNDUxOTU5",
-  appId: "MTo3OTIyOTI0NTE5NTk6d2ViOjQ4ZGM5OGU0ODA0YzIwMGE5ZWM4NzI=",
-  measurementId: "Ry0wNTMwQ1NMOUw5TA==",
-};
-
-firebase.initializeApp({
-  apiKey: decodeConfig(encodeConfig.apiKey),
-  authDomain: decodeConfig(encodeConfig.authDomain),
-  projectId: decodeConfig(encodeConfig.projectId),
-  storageBucket: decodeConfig(encodeConfig.storageBucket),
-  messagingSenderId: decodeConfig(encodeConfig.messagingSenderId),
-  appId: decodeConfig(encodeConfig.appId),
-  measurementId: decodeConfig(encodeConfig.measurementId),
-});
-
-const messaging = firebase.messaging();
-
-messaging.onBackgroundMessage((payload) => {
-  console.log("Background message:", payload);
-
-  const {
-    title = "Notification",
-    body = "",
-    image = "",
-    clickUrl = "/",
-  } = payload.data || {};
-
-  self.registration.showNotification(title, {
-    body,
-    icon: image,
-    badge: image,
-    data: {
-      clickUrl,
-    },
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { BookOpen, ArrowUpRight, Search, Copy, Check } from "lucide-react";
+import sections from "./data/npmDocs.json";
+import "../../assets/style/LandingDocs.css";
+function InlineText({ text }) {
+  return text.split(/(`[^`]+`|https:\/\/[^\s]+)/g).map((part, index) => {
+    if (part.startsWith("`"))
+      return <code key={index}>{part.slice(1, -1)}</code>;
+    if (part.startsWith("https://"))
+      return (
+        <a key={index} href={part} target="_blank" rel="noopener noreferrer">
+          {part} <ArrowUpRight size={13} />
+        </a>
+      );
+    return part;
   });
-});
-
-self.addEventListener("notificationclick", (event) => {
-  event.notification.close();
-
-  let clickUrl = event.notification.data?.clickUrl || "/";
-
-  if (!clickUrl.startsWith("http")) {
-    clickUrl = new URL(clickUrl, API_LINK).href;
+}
+function CodeExample({ text, language }) {
+  const [copied, setCopied] = useState(false);
+  const [error, setError] = useState(false);
+  useEffect(() => {
+    if (!copied) return;
+    const timer = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(timer);
+  }, [copied]);
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setError(false);
+    } catch {
+      setError(true);
+    }
   }
-
-  event.waitUntil(
-    clients
-      .matchAll({
-        type: "window",
-        includeUncontrolled: true,
-      })
-      .then((windowClients) => {
-        for (const client of windowClients) {
-          if (client.url === clickUrl && "focus" in client) {
-            return client.focus();
-          }
-        }
-
-        return clients.openWindow(clickUrl);
-      })
-      .catch((err) => {
-        console.error("Notification click error:", err);
-
-        return clients.openWindow(API_LINK);
-      }),
-  );
-});
-`}
-          />
-        </section>
-
-        <section id="importSDK" className="landing-docs-section">
-          <h2>Import SDK</h2>
-
-          <CustomCodeSection
-            Title="import.js"
-            codeBody={`import {
-  getToken,
-  sendNotification,
-  onMessageListener,
-  initMessaging,
-} from "dev-push-notification";`}
-          />
-        </section>
-
-        <section id="initMessaging" className="landing-docs-section">
-          <h2>Initialize Messaging</h2>
-
-          <p>
-            Initialize the notification system in your app (recommended inside
-            App.jsx).
-          </p>
-
-          <CustomCodeSection
-            Title="init.js"
-            codeBody={`  useEffect(() => {
-    initMessaging(API_KEY);
-    const unsubscribe = onMessageListener(async (payload) => {
-      const { title, body, image, clickUrl } = payload.data || {};
-      const registration = await navigator.serviceWorker.ready;
-      registration.showNotification(title, {
-        body,
-        icon: image,
-        badge: image,
-        data: {
-          clickUrl,
-        },
-      });
-    });
-    return () => unsubscribe();
-  }, []);`}
-          />
-        </section>
-
-        <section id="getDeviceToken" className="landing-docs-section">
-          <h2>Get Device Token</h2>
-
-          <CustomCodeSection
-            Title="getToken.js"
-            codeBody={`const token = await getToken(API_KEY);
-console.log("Device Token:", token);`}
-          />
-        </section>
-
-        <section id="sendNotification" className="landing-docs-section">
-          <h2>Send Notification</h2>
-
-          <CustomCodeSection
-            Title="sendNotification.js"
-            codeBody={`await sendNotification({
-  apiKey: API_KEY,
-  title: "Hello",
-  body: "This is a test push notification",
-  icon: "https://example.com/icon.png",
-  link: "https://example.com",
-  fcmTokens: [token],
-});`}
-          />
-        </section>
-
-        <section id="response" className="landing-docs-section">
-          <h2>Response</h2>
-
-          <p>
-            The API returns structured responses for both success and error
-            cases. Below are real examples based on the backend behavior.
-          </p>
-
-          <CustomCodeSection
-            Title="sendNotification (Success)"
-            style={{ marginBottom: "10px" }}
-            codeBody={`{
-  "success": true,
-  "successCount": 2,
-  "failureCount": 1,
-  "results": [
-    "message-id-1",
-    "message-id-2",
-    { "error": "Invalid registration token" }
-  ]
-}`}
-          />
-
-          <CustomCodeSection
-            Title="sendNotification (Error - Missing Tokens)"
-            style={{ marginBottom: "10px" }}
-            codeBody={`{
-  "error": "FCM tokens are required"
-}`}
-          />
-
-          <CustomCodeSection
-            Title="sendNotification (Server Error)"
-            style={{ marginBottom: "10px" }}
-            codeBody={`{
-  "error": "Internal server error message"
-}`}
-          />
-
-          <CustomCodeSection
-            Title="getFcmToken (Success)"
-            style={{ marginBottom: "10px" }}
-            codeBody={`{
-  "success": true,
-  "token": "device-token-value"
-}`}
-          />
-
-          <CustomCodeSection
-            Title="getFcmToken (Error)"
-            style={{ marginBottom: "10px" }}
-            codeBody={`{
-  "message": "Failed to get token"
-}`}
-          />
-        </section>
-
-        <p className="landing-docs-warning">
-          ⚠️ Make sure dpn-sw.js is placed in the public folder or notifications
-          will not work.
-        </p>
+  return (
+    <div className="sdk-code">
+      <div className="sdk-code-header">
+        <span>{language || "example"}</span>
+        <button type="button" onClick={copy} aria-label="Copy code example">
+          {copied ? <Check size={15} /> : <Copy size={15} />}
+          {copied ? "Copied" : "Copy"}
+        </button>
       </div>
+      <pre>
+        <code>{text}</code>
+      </pre>
+      {error && (
+        <p role="status">
+          Copy unavailable. Select and copy the code manually.
+        </p>
+      )}
     </div>
   );
-};
-
-export default LandingDocs;
+}
+function DocBlock({ block }) {
+  switch (block.type) {
+    case "code":
+      return <CodeExample text={block.text} language={block.language} />;
+    case "heading":
+      return <h3>{block.text}</h3>;
+    case "note":
+      return (
+        <div className="sdk-note">
+          <InlineText text={block.text} />
+        </div>
+      );
+    case "list":
+      return (
+        <ul className="sdk-list">
+          {block.items.map((item) => (
+            <li key={item}>
+              <InlineText text={item} />
+            </li>
+          ))}
+        </ul>
+      );
+    case "table":
+      return (
+        <div className="sdk-table-scroll">
+          <table>
+            <caption className="sdk-visually-hidden">
+              SDK reference parameters and methods
+            </caption>
+            <thead>
+              <tr>
+                {block.rows[0].map((cell) => (
+                  <th scope="col" key={cell}>
+                    {cell}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {block.rows.slice(1).map((row, index) => (
+                <tr key={index}>
+                  {row.map((cell, cellIndex) => (
+                    <td key={cellIndex}>
+                      <InlineText
+                        text={cell.replace("✅", "Yes").replace("❌", "No")}
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    default:
+      return (
+        <p>
+          <InlineText text={block.text} />
+        </p>
+      );
+  }
+}
+export default function LandingDocs() {
+  const [query, setQuery] = useState("");
+  const [active, setActive] = useState(sections[0].id);
+  const filteredSections = sections.filter((section) =>
+    `${section.title} ${JSON.stringify(section.blocks)}`
+      .toLowerCase()
+      .includes(query.trim().toLowerCase()),
+  );
+  useEffect(() => {
+    function updateActive() {
+      let current = sections[0].id;
+      for (const section of sections) {
+        const element = document.getElementById(section.id);
+        if (element && element.getBoundingClientRect().top <= 160)
+          current = section.id;
+      }
+      setActive(current);
+    }
+    window.addEventListener("scroll", updateActive, {
+      passive: true,
+    });
+    updateActive();
+    return () => window.removeEventListener("scroll", updateActive);
+  }, []);
+  return (
+    <div className="sdk-docs marketing-width">
+      <aside className="sdk-sidebar">
+        <div className="sdk-sidebar-title">
+          <BookOpen size={20} />
+          <h2>SDK documentation</h2>
+        </div>
+        <label className="sdk-search">
+          <Search size={17} />
+          <span className="sdk-visually-hidden">
+            Search documentation sections
+          </span>
+          <input
+            type="search"
+            placeholder="Find a section…"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+        </label>
+        <nav aria-label="Documentation sections">
+          {filteredSections.map((section) => (
+            <a
+              key={section.id}
+              href={`#${section.id}`}
+              aria-current={active === section.id ? "location" : undefined}
+              className={active === section.id ? "active" : ""}
+              onClick={() => setActive(section.id)}
+            >
+              {section.title}
+            </a>
+          ))}
+        </nav>
+        {filteredSections.length === 0 && (
+          <p className="sdk-no-results" role="status">
+            No matching sections. Try “email” or “token”.
+          </p>
+        )}
+        <Link className="marketing-text-link" to="/contact">
+          Need a hand? Contact us <ArrowUpRight size={15} />
+        </Link>
+      </aside>
+      <article className="sdk-content">
+        <header className="sdk-docs-heading">
+          <span className="marketing-eyebrow">THE DEV PUSH JAVASCRIPT SDK</span>
+          <h1>From install to inbox.</h1>
+          <p>
+            Add push notifications and email sending to your React web
+            application with <code>dev-push-notification</code>.
+          </p>
+          <div className="marketing-actions">
+            <a
+              className="landing-page-btn landing-page-btn-primary"
+              href="https://www.npmjs.com/package/dev-push-notification"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View on npm <ArrowUpRight size={16} />
+            </a>
+            <Link
+              className="landing-page-btn landing-page-btn-outline"
+              to="/api-section"
+            >
+              Get your API key
+            </Link>
+          </div>
+        </header>
+        <div className="sdk-note">
+          <strong>Package compatibility</strong>
+          <p>
+            This guide follows the supplied npm documentation. This project
+            currently installs version 1.0.4, which does not export{" "}
+            <code>sendMail</code> or forward the notification <code>link</code>{" "}
+            parameter. Email and click-link examples require a package version
+            that supports those features. Response examples are illustrative and
+            may differ by API version.
+          </p>
+        </div>
+        {sections.map((section) => (
+          <section className="sdk-section" id={section.id} key={section.id}>
+            <h2>{section.title}</h2>
+            {section.blocks.map((block, index) => (
+              <DocBlock key={index} block={block} />
+            ))}
+          </section>
+        ))}
+        <div className="sdk-note">
+          <strong>Before you run the React example</strong>
+          <p>
+            Use a browser that supports push messaging over HTTPS or localhost.
+            Request notification permission from a user action. Check that token
+            generation returns a successful response with a token before
+            sending; the installed SDK can return null on failure. Never publish
+            real credentials in example code.
+          </p>
+        </div>
+      </article>
+    </div>
+  );
+}

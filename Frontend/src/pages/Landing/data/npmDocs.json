@@ -1,0 +1,492 @@
+[
+  {
+    "id": "dev-push-notification",
+    "title": "Introduction",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "The easiest way to add push notifications and email sending to your React web applications."
+      }
+    ]
+  },
+  {
+    "id": "features",
+    "title": "Features",
+    "blocks": [
+      {
+        "type": "list",
+        "items": [
+          "Web Push Notifications",
+          "Foreground Notifications",
+          "Background Notifications",
+          "FCM Token Generation",
+          "Email Sending",
+          "Multiple Email Recipients",
+          "Multiple Device Notifications",
+          "React Friendly API"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "installation",
+    "title": "Installation",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "Install the package:"
+      },
+      {
+        "type": "code",
+        "language": "bash",
+        "text": "npm install dev-push-notification"
+      }
+    ]
+  },
+  {
+    "id": "service-worker-setup",
+    "title": "Service Worker Setup",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "Download the service worker file:"
+      },
+      {
+        "type": "paragraph",
+        "text": "https://dev-push-notification.vercel.app/dpn-sw.js"
+      },
+      {
+        "type": "paragraph",
+        "text": "Place it inside your project's public folder:"
+      },
+      {
+        "type": "code",
+        "language": "bash",
+        "text": "/public/dpn-sw.js"
+      },
+      {
+        "type": "paragraph",
+        "text": "Example:"
+      },
+      {
+        "type": "code",
+        "language": "bash",
+        "text": "my-project/\n├── public/\n│   └── dpn-sw.js\n├── src/\n└── package.json"
+      },
+      {
+        "type": "note",
+        "text": "⚠️ Important:  The file must be named exactly `dpn-sw.js` and must be located inside the `public` folder."
+      }
+    ]
+  },
+  {
+    "id": "api-key",
+    "title": "API Key",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "An API key is required to use this package."
+      },
+      {
+        "type": "paragraph",
+        "text": "Get your API key from:"
+      },
+      {
+        "type": "paragraph",
+        "text": "https://dev-push-notification.vercel.app/api-section"
+      },
+      {
+        "type": "paragraph",
+        "text": "Example:"
+      },
+      {
+        "type": "code",
+        "language": "javascript",
+        "text": "const API_KEY = \"YOUR_API_KEY\";"
+      }
+    ]
+  },
+  {
+    "id": "available-methods",
+    "title": "Available Methods",
+    "blocks": [
+      {
+        "type": "table",
+        "rows": [
+          [
+            "Method",
+            "Description"
+          ],
+          [
+            "getToken()",
+            "Generate FCM device token"
+          ],
+          [
+            "initMessaging()",
+            "Initialize Firebase messaging"
+          ],
+          [
+            "onMessageListener()",
+            "Listen for foreground notifications"
+          ],
+          [
+            "sendNotification()",
+            "Send push notifications"
+          ],
+          [
+            "sendMail()",
+            "Send emails"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "complete-push-notification-example",
+    "title": "Complete Push Notification Example",
+    "blocks": [
+      {
+        "type": "code",
+        "language": "javascript",
+        "text": "import { useState, useEffect } from \"react\";\nimport {\n  getToken,\n  sendNotification,\n  onMessageListener,\n  initMessaging,\n} from \"dev-push-notification\";\n\nfunction App() {\n  const [token, setToken] = useState(null);\n  const [loading, setLoading] = useState(\"\");\n\n  const API_KEY = \"YOUR_API_KEY\";\n\n  useEffect(() => {\n    initMessaging(API_KEY);\n\n    const unsubscribe = onMessageListener(async (payload) => {\n      console.log(\"Foreground notification received:\", payload);\n\n      const { title, body, image } = payload.notification;\n\n      const link = payload.data?.clickUrl || \"/\";\n\n      const registration = await navigator.serviceWorker.ready;\n\n      registration.showNotification(title, {\n        body,\n        icon: image,\n        data: {\n          clickUrl: link,\n        },\n      });\n    });\n\n    return () => unsubscribe();\n  }, []);\n\n  const handleGetToken = async () => {\n    try {\n      setLoading(\"getToken\");\n\n      const tokenData = await getToken(API_KEY);\n\n      setToken(tokenData.token);\n\n      console.log(\"Token Response:\", tokenData);\n    } catch (error) {\n      console.error(error);\n    } finally {\n      setLoading(\"\");\n    }\n  };\n\n  const handleSendNotification = async () => {\n    try {\n      setLoading(\"sendNotification\");\n\n      const response = await sendNotification({\n        apiKey: API_KEY,\n        title: \"Hello User\",\n        body: \"This is a test notification\",\n        icon: \"https://your-domain.com/icon.png\",\n        link: \"https://your-domain.com/dashboard\",\n        fcmTokens: [token],\n      });\n\n      console.log(response);\n    } catch (error) {\n      console.error(error);\n    } finally {\n      setLoading(\"\");\n    }\n  };\n\n  return (\n    <div>\n      <button onClick={handleGetToken}>\n        {loading === \"getToken\"\n          ? \"Generating...\"\n          : \"Generate Token\"}\n      </button>\n\n      <button\n        disabled={!token}\n        onClick={handleSendNotification}\n      >\n        {loading === \"sendNotification\"\n          ? \"Sending...\"\n          : \"Send Notification\"}\n      </button>\n    </div>\n  );\n}\n\nexport default App;"
+      }
+    ]
+  },
+  {
+    "id": "generate-device-token",
+    "title": "Generate Device Token",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "Generate an FCM token for the current device."
+      },
+      {
+        "type": "code",
+        "language": "javascript",
+        "text": "import { getToken } from \"dev-push-notification\";\n\nconst tokenData = await getToken(API_KEY);\n\nconsole.log(tokenData);"
+      },
+      {
+        "type": "paragraph",
+        "text": "Example Response:"
+      },
+      {
+        "type": "code",
+        "language": "json",
+        "text": "{\n  \"success\": true,\n  \"token\": \"fcm_device_token_here\"\n}"
+      }
+    ]
+  },
+  {
+    "id": "send-push-notification",
+    "title": "Send Push Notification",
+    "blocks": [
+      {
+        "type": "code",
+        "language": "javascript",
+        "text": "import { sendNotification } from \"dev-push-notification\";\n\nconst response = await sendNotification({\n  apiKey: API_KEY,\n  title: \"Welcome\",\n  body: \"This is a test notification\",\n  icon: \"https://your-domain.com/icon.png\",\n  link: \"https://your-domain.com/dashboard\",\n  fcmTokens: [\n    \"token_1\",\n    \"token_2\",\n    \"token_3\"\n  ]\n});\n\nconsole.log(response);"
+      },
+      {
+        "type": "heading",
+        "text": "Parameters"
+      },
+      {
+        "type": "table",
+        "rows": [
+          [
+            "Parameter",
+            "Type",
+            "Required",
+            "Description"
+          ],
+          [
+            "apiKey",
+            "string",
+            "✅",
+            "Your API key"
+          ],
+          [
+            "title",
+            "string",
+            "✅",
+            "Notification title"
+          ],
+          [
+            "body",
+            "string",
+            "✅",
+            "Notification body"
+          ],
+          [
+            "icon",
+            "string",
+            "❌",
+            "Notification icon URL"
+          ],
+          [
+            "link",
+            "string",
+            "❌",
+            "URL opened when notification is clicked"
+          ],
+          [
+            "fcmTokens",
+            "string[]",
+            "✅",
+            "One or more FCM tokens"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Example Response"
+      },
+      {
+        "type": "code",
+        "language": "json",
+        "text": "{\n  \"success\": true,\n  \"message\": \"Notification sent successfully\"\n}"
+      }
+    ]
+  },
+  {
+    "id": "listen-for-foreground-notifications",
+    "title": "Listen for Foreground Notifications",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "Place this inside your root component (recommended: App.jsx)."
+      },
+      {
+        "type": "code",
+        "language": "javascript",
+        "text": "import {\n  initMessaging,\n  onMessageListener,\n} from \"dev-push-notification\";\n\nuseEffect(() => {\n  initMessaging(API_KEY);\n\n  const unsubscribe = onMessageListener(\n    async (payload) => {\n      console.log(payload);\n    }\n  );\n\n  return () => unsubscribe();\n}, []);"
+      }
+    ]
+  },
+  {
+    "id": "send-email",
+    "title": "Send Email",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "Send emails directly using your API key."
+      },
+      {
+        "type": "code",
+        "language": "javascript",
+        "text": "import { sendMail } from \"dev-push-notification\";\n\nconst response = await sendMail({\n  apiKey: API_KEY,\n  from: \"Buddy Space\",\n  mails: [\n    \"john@example.com\",\n    \"jane@example.com\"\n  ],\n  subject: \"Welcome Email\",\n  htmlContent: `\n    <h1>Hello!</h1>\n    <p>Welcome to our platform.</p>\n  `\n});\n\nconsole.log(response);"
+      }
+    ]
+  },
+  {
+    "id": "send-email-to-a-single-recipient",
+    "title": "Send Email to a Single Recipient",
+    "blocks": [
+      {
+        "type": "code",
+        "language": "javascript",
+        "text": "await sendMail({\n  apiKey: API_KEY,\n  from: \"Buddy Space\",\n  mails: \"john@example.com\",\n  subject: \"Hello\",\n  htmlContent: \"<h1>Welcome</h1>\"\n});"
+      }
+    ]
+  },
+  {
+    "id": "send-email-to-multiple-recipients",
+    "title": "Send Email to Multiple Recipients",
+    "blocks": [
+      {
+        "type": "code",
+        "language": "javascript",
+        "text": "await sendMail({\n  apiKey: API_KEY,\n  from: \"Buddy Space\",\n  mails: [\n    \"user1@example.com\",\n    \"user2@example.com\",\n    \"user3@example.com\"\n  ],\n  subject: \"Announcement\",\n  htmlContent: `\n    <h2>Important Update</h2>\n    <p>Thank you for using our service.</p>\n  `\n});"
+      }
+    ]
+  },
+  {
+    "id": "email-parameters",
+    "title": "Email Parameters",
+    "blocks": [
+      {
+        "type": "table",
+        "rows": [
+          [
+            "Parameter",
+            "Type",
+            "Required",
+            "Description"
+          ],
+          [
+            "apiKey",
+            "string",
+            "Yes",
+            "Your API key"
+          ],
+          [
+            "from",
+            "string",
+            "Yes",
+            "Sender name"
+          ],
+          [
+            "mails",
+            "string | string[]",
+            "Yes",
+            "Recipient email(s)"
+          ],
+          [
+            "subject",
+            "string",
+            "Yes",
+            "Email subject"
+          ],
+          [
+            "htmlContent",
+            "string",
+            "Yes",
+            "Email HTML content"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "email-response-example",
+    "title": "Email Response Example",
+    "blocks": [
+      {
+        "type": "code",
+        "language": "json",
+        "text": "{\n  \"success\": true,\n  \"message\": \"Email successfully sent\",\n  \"creditsUsed\": 2,\n  \"remainingCredits\": 98\n}"
+      }
+    ]
+  },
+  {
+    "id": "credits-system",
+    "title": "Credits System",
+    "blocks": [
+      {
+        "type": "heading",
+        "text": "Basic User"
+      },
+      {
+        "type": "list",
+        "items": [
+          "1 recipient = 1 credit",
+          "10 recipients = 10 credits"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Example:"
+      },
+      {
+        "type": "code",
+        "language": "javascript",
+        "text": "mails: [\n  \"user1@gmail.com\",\n  \"user2@gmail.com\",\n  \"user3@gmail.com\"\n];"
+      },
+      {
+        "type": "paragraph",
+        "text": "Credits Used:"
+      },
+      {
+        "type": "code",
+        "language": "text",
+        "text": "3"
+      },
+      {
+        "type": "heading",
+        "text": "Premium User"
+      },
+      {
+        "type": "paragraph",
+        "text": "Unlimited email sending."
+      },
+      {
+        "type": "paragraph",
+        "text": "No credits are deducted."
+      }
+    ]
+  },
+  {
+    "id": "important-notes",
+    "title": "Important Notes",
+    "blocks": [
+      {
+        "type": "heading",
+        "text": "Service Worker Required"
+      },
+      {
+        "type": "paragraph",
+        "text": "Make sure:"
+      },
+      {
+        "type": "code",
+        "language": "bash",
+        "text": "/public/dpn-sw.js"
+      },
+      {
+        "type": "paragraph",
+        "text": "exists in your project."
+      },
+      {
+        "type": "heading",
+        "text": "HTTPS Required"
+      },
+      {
+        "type": "paragraph",
+        "text": "Push notifications work only on:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "HTTPS domains",
+          "localhost"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Browser Permission"
+      },
+      {
+        "type": "paragraph",
+        "text": "Users must allow notification permission in their browser before receiving notifications."
+      },
+      {
+        "type": "heading",
+        "text": "Store Tokens"
+      },
+      {
+        "type": "paragraph",
+        "text": "It is recommended to save generated FCM tokens in your database so you can send notifications later."
+      },
+      {
+        "type": "heading",
+        "text": "Multiple Tokens Supported"
+      },
+      {
+        "type": "paragraph",
+        "text": "You can send notifications to multiple devices simultaneously."
+      },
+      {
+        "type": "code",
+        "language": "javascript",
+        "text": "await sendNotification({\n  apiKey: API_KEY,\n  title: \"New Update\",\n  body: \"Version 2.0 released\",\n  fcmTokens: [\n    token1,\n    token2,\n    token3\n  ]\n});"
+      }
+    ]
+  },
+  {
+    "id": "support",
+    "title": "Support",
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "If you encounter any issues or have questions, please visit:"
+      },
+      {
+        "type": "paragraph",
+        "text": "https://dev-push-notification.vercel.app"
+      },
+      {
+        "type": "paragraph",
+        "text": "Happy Coding 🚀"
+      }
+    ]
+  }
+]

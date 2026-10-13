@@ -1,63 +1,123 @@
-import React from "react";
-import "../../assets/style/InfoPages.css";
-
-const LandingCareers = () => {
+import { createElement } from "react";
+import { Link } from "react-router-dom";
+import { Code2, Heart, Compass, ArrowUpRight, ArrowRight } from "lucide-react";
+export default function LandingCareers() {
   return (
-    <section className="careers-page">
-      <div className="careers-page-header">
-        <h1 className="careers-page-title">
-          Careers at Dev Notification Pusher
+    <div className="marketing-width marketing-info-page">
+      <div className="info-heading">
+        <span className="marketing-eyebrow">BUILD SOMETHING THAT CONNECTS</span>
+        <h1>
+          Good tools start
+          <br />
+          with curious people.
         </h1>
-        <p className="careers-page-subtitle">
-          Build the future of developer-friendly notification infrastructure.
+        <p>
+          We care about making developers’ everyday work simpler. If you enjoy
+          thoughtful engineering and useful products, we’d like to hear from
+          you.
         </p>
       </div>
-
-      <div className="careers-page-content">
-        <p className="careers-page-text">
-          At Dev Notification Pusher, we are building a powerful and simple
-          platform that helps developers send notifications effortlessly using
-          APIs and a credit-based system. We value speed, simplicity, and
-          scalability. If you love building tools for developers and want to
-          make an impact, join us.
-        </p>
-
-        <div className="careers-page-roles">
-          <div className="careers-page-role">
-            <h4>Frontend Developer</h4>
-            <p>
-              Build clean, fast, and intuitive interfaces for developers using
-              modern frameworks like React.
-            </p>
-          </div>
-
-          <div className="careers-page-role">
-            <h4>Backend Engineer</h4>
-            <p>
-              Design scalable APIs, manage credit systems, and ensure secure
-              notification delivery.
-            </p>
-          </div>
-
-          <div className="careers-page-role">
-            <h4>DevRel Engineer</h4>
-            <p>
-              Help developers succeed by creating documentation, examples, and
-              engaging with the community.
-            </p>
-          </div>
-
-          <div className="careers-page-role">
-            <h4>Product Engineer</h4>
-            <p>
-              Work across frontend and backend to improve user experience,
-              dashboard features, and developer workflows.
-            </p>
-          </div>
+      <div className="careers-banner">
+        <div>
+          <span className="marketing-eyebrow">OUR PURPOSE</span>
+          <h2>Make the next connection easier.</h2>
+          <p>
+            Dev Push Notification brings notification delivery, API keys,
+            credits, and usage insights into one workflow. We’re interested in
+            people who can help make that experience clearer and more useful.
+          </p>
+        </div>
+        <div className="careers-art" aria-hidden="true">
+          <Code2 size={76} />
+          <span>BUILD · LEARN · CONNECT</span>
         </div>
       </div>
-    </section>
+      <section className="marketing-section">
+        <div className="section-heading">
+          <span className="marketing-eyebrow">WHAT MATTERS TO US</span>
+          <h2>The way we build matters.</h2>
+        </div>
+        <div className="marketing-grid">
+          {[
+            [
+              Compass,
+              "Stay curious",
+              "Ask good questions, learn from feedback, and understand the problem before reaching for a solution.",
+            ],
+            [
+              Code2,
+              "Keep it useful",
+              "Make APIs predictable, interfaces clear, and documentation practical. Small details make a difference.",
+            ],
+            [
+              Heart,
+              "Care about the people",
+              "Build with empathy for the developers using our tools and the people receiving their messages.",
+            ],
+          ].map(([Icon, title, text]) => (
+            <article className="marketing-card" key={title}>
+              <span className="marketing-icon">
+                {createElement(Icon, {
+                  size: 23,
+                })}
+              </span>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="career-interest">
+        <div>
+          <span className="marketing-eyebrow">START A CONVERSATION</span>
+          <h2>Where could you make an impact?</h2>
+          <p>
+            These are areas of interest, rather than confirmed vacancies.
+            Contact us to ask about current opportunities.
+          </p>
+        </div>
+        <div className="career-areas">
+          {[
+            [
+              "Product & frontend",
+              "Thoughtful React interfaces and a smoother developer dashboard.",
+            ],
+            [
+              "Backend & infrastructure",
+              "Practical APIs, notification workflows, and reliable systems.",
+            ],
+            [
+              "Developer experience",
+              "Clear documentation, useful examples, and better onboarding.",
+            ],
+          ].map(([title, text]) => (
+            <article key={title}>
+              <div>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </div>
+              <Code2 size={22} />
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="marketing-cta">
+        <span className="marketing-eyebrow">INTRODUCE YOURSELF</span>
+        <h2>Show us what you love building.</h2>
+        <p>
+          Share your experience, a project or portfolio, and the kind of work
+          you’re interested in.
+        </p>
+        <a
+          className="landing-page-btn landing-page-btn-primary"
+          href="mailto:support@dev-push-notification.com?subject=Career%20interest%20at%20Dev%20Push"
+        >
+          Express your interest <ArrowUpRight size={18} />
+        </a>
+        <Link to="/contact" className="marketing-text-link">
+          Other questions? Contact us <ArrowRight size={17} />
+        </Link>
+      </section>
+    </div>
   );
-};
-
-export default LandingCareers;
+}
